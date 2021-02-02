@@ -1,7 +1,11 @@
 import React from "react";
 import { View, Button, StyleSheet } from "react-native";
 import { Formik } from "formik";
+import { useHistory } from "react-router-dom";
 import * as yup from "yup";
+
+import useSignIn from "../hooks/useSignIn"
+
 
 import FormikTextInput from "./FormikTextInput";
 
@@ -26,17 +30,34 @@ const styles = StyleSheet.create({
   },
 });
 
-const SignIn = () => {
+const Login = () => {
+  const [signIn] = useSignIn();
+  let history = useHistory();
+
   const initialValues = {
-    username: "",
-    password: "",
+    username: "kalle",
+    password: "password",
   };
+
+  const handleSubmit = async (values) => {
+    const { username, password } = values;
+
+    try {
+      const { data } = await signIn({ username, password });
+      history.push("/");
+      console.log(data);
+
+    } catch (e) {
+      console.log(e);
+    }
+  
+  }
 
   return (
     <View style={styles.container}>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => handleSubmit(values)}
         validationSchema={validationSchema}
       >
         {({ handleSubmit }) => (
@@ -62,4 +83,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Login;
