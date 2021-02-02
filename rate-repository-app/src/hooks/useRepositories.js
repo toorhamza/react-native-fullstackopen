@@ -1,15 +1,13 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from "@apollo/react-hooks";
 
-import { GET_REPOSITORIES } from '../graphql/queries';
+import { GET_REPOSITORIES } from "../graphql/queries";
 
 const useRepositories = () => {
-
   const { data, error, loading } = useQuery(GET_REPOSITORIES, {
-    fetchPolicy: 'cache-and-network',
+    fetchPolicy: "cache-and-network",
   });
 
-  const repositories = data?.repositories?.edges
+  const repositories = data?.repositories?.edges;
   /*  const [repositories, setRepositories] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +26,7 @@ const useRepositories = () => {
   }, []);
 
   return { repositories, loading, refetch: fetchRepositories }; */
-  return { repositories }
+  return { repositories };
 };
 
 export default useRepositories;
