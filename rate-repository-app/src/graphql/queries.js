@@ -24,3 +24,27 @@ query {
   }
 }
 `;
+
+export const SINGLE_REPO = gql`
+query getSingleRepo($id: ID!) {
+  repository(id: $id) {
+    ...RepositoryDetails
+    reviews {
+      edges {
+        node {
+          id
+          text
+          rating
+          createdAt
+          user {
+            id
+            username
+          }
+        }
+      }
+    }
+  }
+  
+}
+${REPOSITORY_DETAILS}
+`;

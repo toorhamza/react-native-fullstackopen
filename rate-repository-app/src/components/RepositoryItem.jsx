@@ -1,9 +1,15 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableWithoutFeedback,
+  Button,
+} from "react-native";
 
 import Text from "./Text";
 
-const RepositoryItem = ({ item }) => {
+const RepositoryItem = ({ item, repository }) => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: "white",
@@ -26,10 +32,18 @@ const RepositoryItem = ({ item }) => {
       margin: 5,
     },
     itemBlock: {
-      padding: 20
-    }
+      padding: 20,
+    },
   });
-  const repo = item.item;
+  const repo = item ? item.item : repository ? repository.repository : null;
+
+  const githubButton = () => (
+    <View style={styles.buttonSubmit}>
+      <TouchableWithoutFeedback >
+        <Button onPress={() => console.log("Pressed Github")} title="Open on Github" />
+      </TouchableWithoutFeedback>
+    </View>
+  );
   return (
     <View style={styles.container}>
       <View style={styles.flexView}>
@@ -38,8 +52,12 @@ const RepositoryItem = ({ item }) => {
           source={{ uri: repo.ownerAvatarUrl }}
         />
         <View style={styles.topRight}>
-          <Text fontWeight="bold" testID="fullName">{repo.fullName}</Text>
-          <Text color="textSecondary" testID="description">{repo.description}</Text>
+          <Text fontWeight="bold" testID="fullName">
+            {repo.fullName}
+          </Text>
+          <Text color="textSecondary" testID="description">
+            {repo.description}
+          </Text>
           <Text color="primary" style={styles.languageBlue} testID="language">
             {repo.language}
           </Text>
@@ -48,25 +66,34 @@ const RepositoryItem = ({ item }) => {
 
       <View style={styles.flexView}>
         <View style={styles.itemBlock}>
-          <Text fontWeight="bold" testID="starsCount">{repo.stargazersCount}</Text>
+          <Text fontWeight="bold" testID="starsCount">
+            {repo.stargazersCount}
+          </Text>
           <Text color="textSecondary">Stars</Text>
         </View>
 
         <View style={styles.itemBlock}>
-          <Text fontWeight="bold" testID="forksCount">{repo.forksCount}</Text>
+          <Text fontWeight="bold" testID="forksCount">
+            {repo.forksCount}
+          </Text>
           <Text color="textSecondary">Forks</Text>
         </View>
 
         <View style={styles.itemBlock}>
-          <Text fontWeight="bold" testID="review">{repo.reviewCount}</Text>
+          <Text fontWeight="bold" testID="review">
+            {repo.reviewCount}
+          </Text>
           <Text color="textSecondary">Reviews</Text>
         </View>
 
         <View style={styles.itemBlock}>
-          <Text fontWeight="bold" testID="rating">{repo.ratingAverage}</Text>
-          <Text color="textSecondary">Reviews</Text>
+          <Text fontWeight="bold" testID="rating">
+            {repo.ratingAverage}
+          </Text>
+          <Text color="textSecondary">Rating</Text>
         </View>
       </View>
+      {repository && githubButton()}
     </View>
   );
 };
