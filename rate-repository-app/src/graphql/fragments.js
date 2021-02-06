@@ -17,3 +17,12 @@ export const REPOSITORY_DETAILS = gql`
     language
   }
 `;
+
+export const PAGE_DETAILS = gql`
+  fragment PageDetails on PageInfo {
+    totalCount
+    hasNextPage
+    endCursor
+    startCursor
+  }
+`;

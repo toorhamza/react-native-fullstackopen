@@ -3,9 +3,8 @@ import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import RepositoryItem from "./RepositoryItem";
 import { useHistory } from "react-router-native";
 import RNPickerSelect from "react-native-picker-select";
-import { Searchbar } from 'react-native-paper';
-import { useDebounce } from 'use-debounce';
-
+import { Searchbar } from "react-native-paper";
+import { useDebounce } from "use-debounce";
 
 import useRepositories from "../hooks/useRepositories";
 
@@ -15,45 +14,23 @@ const styles = StyleSheet.create({
   },
 });
 
-const ItemSeparator = () => <View style={styles.separator} />;
 
-export const RepositoryListContainer = ({ repositories }) => {
-  const history = useHistory();
-  const repositoryNodes = repositories
-    ? repositories.edges.map((edge) => edge.node)
-    : [];
-
-  return (
-    <FlatList
-      data={repositoryNodes}
-      ItemSeparatorComponent={ItemSeparator}
-      renderItem={(item) => (
-        <TouchableOpacity
-          onPress={() => history.push(`/repository/${item.item.id}`)}
-        >
-          <RepositoryItem item={item} />
-        </TouchableOpacity>
-      )}
-    />
-  );
-};
-
-const RepositoryList = () => {
-  const [sortBy, setSortBy] = useState("latestReview");
-  const [searchValue, setSearchValue] = useState("")
-  const [searchKeyword] = useDebounce(searchValue, 500);
-  const { repositories } = useRepositories({sortBy, searchKeyword});
-
-  const onChangeSearch = query => setSearchValue(query);
+export class RepositoryListContainer extends React.Component {
+  renderHeader = () => {
+    // this.props contains the component's props
+    const sortBy = this.props.sortBy;
+    const setSortBy = this.props.setSortBy;
+    const searchValue = this.props.searchValue;
+    const onChangeSearch = this.props.onChangeSearch;    
+    // ...
   
-
-  return (
-    <View>
-       <Searchbar
-      placeholder="Search"
-      onChangeText={onChangeSearch}
-      value={searchValue}
-    />
+    return (
+<View>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={onChangeSearch}
+        value={searchValue}
+      />
       <RNPickerSelect
         onValueChange={(value) => setSortBy(value)}
         items={[
@@ -63,8 +40,52 @@ const RepositoryList = () => {
         ]}
         value={sortBy}
       />
-      <RepositoryListContainer repositories={repositories} />
-    </View>
+    </View>      );
+  };
+
+  render() {
+    const repositoryNodes = this.props.repositories
+    ? this.props.repositories.edges.map((edge) => edge.node)
+    : [];
+    return (
+      <FlatList
+      ListHeaderComponent={this.renderHeader}
+      data={repositoryNodes}
+      ItemSeparatorComponent={this.props.ItemSeparator}
+      renderItem={(item) => (
+        <TouchableOpacity
+          onPress={() => this.props.history.push(`/repository/${item.item.id}`)}
+        >
+          <RepositoryItem item={item} />
+        </TouchableOpacity>
+      )}
+    />
+    );
+  }
+}
+
+const RepositoryList = () => {
+  const [sortBy, setSortBy] = useState("latestReview");
+  const [searchValue, setSearchValue] = useState("");
+  const [searchKeyword] = useDebounce(searchValue, 500);
+  const { repositories } = useRepositories({ sortBy, searchKeyword });
+  const history = useHistory();
+
+
+  const onChangeSearch = (query) => setSearchValue(query);
+  const ItemSeparator = () => <View style={styles.separator} />;
+
+
+  return (
+    <RepositoryListContainer
+      repositories={repositories}
+      setSortBy={setSortBy}
+      sortBy={sortBy}
+      onChangeSearch={onChangeSearch}
+      searchValue={searchValue}
+      history={history}
+      ItemSeparator={ItemSeparator}
+    />
   );
 };
 
