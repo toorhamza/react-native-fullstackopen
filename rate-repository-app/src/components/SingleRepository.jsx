@@ -21,6 +21,7 @@ const SingleRepository = () => {
   const reviews = repository?.repository?.reviews?.edges;
 
   if (!repository) return null;
+  console.log(repository)
   return (
     <ScrollView>
       <RepositoryItem repository={repository} />
