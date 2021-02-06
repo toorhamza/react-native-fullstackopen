@@ -3,6 +3,9 @@ import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import RepositoryItem from "./RepositoryItem";
 import { useHistory } from "react-router-native";
 import RNPickerSelect from "react-native-picker-select";
+import { Searchbar } from 'react-native-paper';
+import { useDebounce } from 'use-debounce';
+
 
 import useRepositories from "../hooks/useRepositories";
 
@@ -37,10 +40,20 @@ export const RepositoryListContainer = ({ repositories }) => {
 
 const RepositoryList = () => {
   const [sortBy, setSortBy] = useState("latestReview");
-  const { repositories } = useRepositories({sortBy});
+  const [searchValue, setSearchValue] = useState("")
+  const [searchKeyword] = useDebounce(searchValue, 500);
+  const { repositories } = useRepositories({sortBy, searchKeyword});
+
+  const onChangeSearch = query => setSearchValue(query);
+  
 
   return (
     <View>
+       <Searchbar
+      placeholder="Search"
+      onChangeText={onChangeSearch}
+      value={searchValue}
+    />
       <RNPickerSelect
         onValueChange={(value) => setSortBy(value)}
         items={[
@@ -48,6 +61,7 @@ const RepositoryList = () => {
           { label: "Lowest Rated", value: "lowestRated" },
           { label: "Latest Review", value: "latestReview" },
         ]}
+        value={sortBy}
       />
       <RepositoryListContainer repositories={repositories} />
     </View>
