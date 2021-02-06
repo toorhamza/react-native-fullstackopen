@@ -1,8 +1,11 @@
-import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useContext } from "react";
+import { View, StyleSheet, ScrollView, Text, TouchableWithoutFeedback } from "react-native";
 import Constants from "expo-constants";
+import { useQuery, useApolloClient } from "@apollo/react-hooks";
 
 import AppBarTab from "./AppBarTab";
+import { IS_LOGGED_IN } from "../graphql/queries";
+import AuthStorageContext from "../contexts/AuthStorageContext";
 
 const styles = StyleSheet.create({
   container: {
@@ -15,11 +18,24 @@ const styles = StyleSheet.create({
 });
 
 const AppBar = () => {
+  const { data, error, loading } = useQuery(IS_LOGGED_IN);
+  const authStorage = useContext(AuthStorageContext);
+  const apolloClient = useApolloClient();
+
+  const handleSignOut = async () => {
+    await authStorage.removeAccessToken();
+    await apolloClient.resetStore();
+  };
+
+  const LogOutButton = () => (
+      <TouchableWithoutFeedback onPress={handleSignOut}><Text style={{color:"white", padding: 10}}>Sign Out</Text></TouchableWithoutFeedback>
+  )
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal>
         <AppBarTab link="/" text="Repositories" />
-        <AppBarTab link="/login" text="Sign In" />
+        {data?.authorizedUser === null ? <AppBarTab link="/login" text="Sign In" /> : <LogOutButton />}
       </ScrollView>
     </View>
   );

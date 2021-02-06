@@ -4,8 +4,7 @@ import { Formik } from "formik";
 import { useHistory } from "react-router-dom";
 import * as yup from "yup";
 
-import useSignIn from "../hooks/useSignIn"
-
+import useSignIn from "../hooks/useSignIn";
 
 import FormikTextInput from "./FormikTextInput";
 
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 15,
     marginTop: 5,
-    borderWidth: 1
+    borderWidth: 1,
   },
   buttonSubmit: {
     padding: 1,
@@ -46,12 +45,10 @@ const Login = () => {
       const { data } = await signIn({ username, password });
       history.push("/");
       console.log(data);
-
     } catch (e) {
       console.log(e);
     }
-  
-  }
+  };
 
   return (
     <View style={styles.container}>
