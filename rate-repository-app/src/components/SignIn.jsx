@@ -29,25 +29,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const Login = () => {
-  const [signIn] = useSignIn();
-  let history = useHistory();
-
+export const LoginContainer = ({ handleSubmit }) => {
   const initialValues = {
     username: "kalle",
     password: "password",
-  };
-
-  const handleSubmit = async (values) => {
-    const { username, password } = values;
-
-    try {
-      const { data } = await signIn({ username, password });
-      history.push("/");
-      console.log(data);
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   return (
@@ -63,21 +48,46 @@ const Login = () => {
               name="username"
               placeholder="Username"
               style={styles.textInput}
+              testID="usernameField"
             />
             <FormikTextInput
               name="password"
               placeholder="Password"
               secureTextEntry={true}
               style={styles.textInput}
+              testID="passwordField"
             />
             <View style={styles.buttonSubmit}>
-              <Button onPress={handleSubmit} title="Submit" />
+              <Button
+                testID="submitButton"
+                onPress={handleSubmit}
+                title="Submit"
+              />
             </View>
           </View>
         )}
       </Formik>
     </View>
   );
+};
+
+const Login = () => {
+  const [signIn] = useSignIn();
+  let history = useHistory();
+
+  const handleSubmit = async (values) => {
+    const { username, password } = values;
+
+    try {
+      const { data } = await signIn({ username, password });
+      history.push("/");
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  return <LoginContainer handleSubmit={handleSubmit} />;
 };
 
 export default Login;
