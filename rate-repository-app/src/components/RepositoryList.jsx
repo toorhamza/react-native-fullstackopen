@@ -59,6 +59,8 @@ export class RepositoryListContainer extends React.Component {
           <RepositoryItem item={item} />
         </TouchableOpacity>
       )}
+      onEndReached={this.props.onEndReach}
+      onEndReachedThreshold={0.5}
     />
     );
   }
@@ -68,12 +70,16 @@ const RepositoryList = () => {
   const [sortBy, setSortBy] = useState("latestReview");
   const [searchValue, setSearchValue] = useState("");
   const [searchKeyword] = useDebounce(searchValue, 500);
-  const { repositories } = useRepositories({ sortBy, searchKeyword });
+  const { repositories, fetchMore } = useRepositories({ sortBy, searchKeyword, first: 3 });
   const history = useHistory();
 
 
   const onChangeSearch = (query) => setSearchValue(query);
   const ItemSeparator = () => <View style={styles.separator} />;
+
+  const onEndReach = () => {
+    fetchMore();
+  };
 
 
   return (
@@ -85,6 +91,7 @@ const RepositoryList = () => {
       searchValue={searchValue}
       history={history}
       ItemSeparator={ItemSeparator}
+      onEndReach={onEndReach}
     />
   );
 };

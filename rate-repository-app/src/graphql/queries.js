@@ -17,14 +17,14 @@ export const GET_REPOSITORIES = gql`
       first: $first
       after: $after
     ) {
+      pageInfo {
+        ...PageDetails
+      }
       edges {
         node {
           ...RepositoryDetails
         }
         cursor
-      }
-      pageInfo {
-        ...PageDetails
       }
     }
   }
@@ -42,10 +42,10 @@ export const IS_LOGGED_IN = gql`
 `;
 
 export const SINGLE_REPO = gql`
-  query getSingleRepo($id: ID!) {
+  query getSingleRepo($id: ID!, $first: Int, $after: String) {
     repository(id: $id) {
       ...RepositoryDetails
-      reviews {
+      reviews(first: $first, after: $after) {    
         edges {
           node {
             id
@@ -57,9 +57,15 @@ export const SINGLE_REPO = gql`
               username
             }
           }
+          cursor
+        }
+        pageInfo {
+          ...PageDetails
         }
       }
     }
   }
+  ${PAGE_DETAILS}
   ${REPOSITORY_DETAILS}
 `;
+

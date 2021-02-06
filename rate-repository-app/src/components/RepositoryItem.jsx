@@ -35,7 +35,7 @@ const RepositoryItem = ({ item, repository }) => {
       padding: 20,
     },
   });
-  const repo = item ? item.item : repository ? repository.repository : null;
+  const repo = item ? item.item : repository ? repository : null;
 
   const githubButton = () => (
     <View style={styles.buttonSubmit}>

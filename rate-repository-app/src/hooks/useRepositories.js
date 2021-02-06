@@ -2,8 +2,7 @@ import { useQuery } from "@apollo/react-hooks";
 
 import { GET_REPOSITORIES } from "../graphql/queries";
 
-const useRepositories = ({ sortBy, searchKeyword }) => {
-
+const useRepositories = ({ sortBy, searchKeyword, first }) => {
   const latestReview = { orderBy: "CREATED_AT", orderDirection: "DESC" };
   const highestRated = { orderBy: "RATING_AVERAGE", orderDirection: "DESC" };
   const lowestRated = { orderBy: "RATING_AVERAGE", orderDirection: "ASC" };
@@ -17,31 +16,49 @@ const useRepositories = ({ sortBy, searchKeyword }) => {
       ? lowestRated
       : null;
 
-  const { data, error, loading } = useQuery(GET_REPOSITORIES, {
-    variables: {...orderVariables, searchKeyword},
+  const variables = { ...orderVariables, searchKeyword, first };
+
+  const { data, loading, fetchMore, ...result } = useQuery(GET_REPOSITORIES, {
+    variables: variables,
     fetchPolicy: "cache-and-network",
   });
 
-  const repositories = data?.repositories;
-  /*  const [repositories, setRepositories] = useState();
-  const [loading, setLoading] = useState(false);
+  const handleFetchMore = () => {
+    const canFetchMore =
+      !loading && data && data.repositories.pageInfo.hasNextPage;
 
-  const fetchRepositories = async () => {
-    setLoading(true);
 
-    const response = await fetch('http://87.92.208.50:5000/api/repositories');
-    const json = await response.json();
+    if (!canFetchMore) {
+      return;
+    }
 
-    setLoading(false);
-    setRepositories(json);
+    fetchMore({
+      query: GET_REPOSITORIES,
+      variables: {
+        after: data.repositories.pageInfo.endCursor,
+        ...variables,
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const nextResult = {
+          repositories: {
+            ...fetchMoreResult.repositories,
+            edges: [
+              ...previousResult.repositories.edges,
+              ...fetchMoreResult.repositories.edges,
+            ],
+          },
+        };
+
+        return nextResult;
+      },
+    });
   };
 
-  useEffect(() => {
-    fetchRepositories();
-  }, []);
-
-  return { repositories, loading, refetch: fetchRepositories }; */
-  return { repositories };
+  return {
+    repositories: data?.repositories,
+    fetchMore: handleFetchMore,
+    ...result,
+  };
 };
 
 export default useRepositories;

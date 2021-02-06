@@ -16,12 +16,15 @@ const ItemSeparator = () => <View style={styles.separator} />;
 
 const SingleRepository = () => {
   const { id } = useParams();
-  const { repository } = useSingleRepository({ id: id });
+  const { repository, fetchMore } = useSingleRepository({ id: id, first: 3 });
 
-  const reviews = repository?.repository?.reviews?.edges;
+  const reviews = repository?.reviews?.edges;
+
+  const onEndReach = () => {
+    fetchMore();
+  };
 
   if (!repository) return null;
-  console.log(repository)
   return (
     <ScrollView>
       <RepositoryItem repository={repository} />
@@ -30,6 +33,8 @@ const SingleRepository = () => {
         data={reviews}
         ItemSeparatorComponent={ItemSeparator}
         renderItem={(item) => <ReviewItem review={item} />}
+        onEndReached={onEndReach}
+        onEndReachedThreshold={0.5}
       />
     </ScrollView>
   );
