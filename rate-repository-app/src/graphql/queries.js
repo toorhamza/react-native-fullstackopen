@@ -69,3 +69,27 @@ export const SINGLE_REPO = gql`
   ${REPOSITORY_DETAILS}
 `;
 
+export const GET_REVIEWS =  gql` {
+  authorizedUser {
+    id
+    username
+    reviews {
+      edges {
+        node {
+          id
+          rating
+          text
+          createdAt
+          repositoryId
+          repository {
+            id
+            fullName
+          }
+        }
+      }
+    }
+  }
+}
+
+`;
+
